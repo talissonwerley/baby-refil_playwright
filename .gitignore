@@ -1,3 +1,6 @@
+# Diretrizes
+docs/
+
 # Python
 __pycache__/
 *.py[cod]
@@ -51,6 +54,7 @@ reports/
 
 # OS
 Thumbs.db
+
 
 
 
