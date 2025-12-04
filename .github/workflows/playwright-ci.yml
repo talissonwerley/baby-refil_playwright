@@ -1,51 +1,47 @@
-# .github/workflows/playwright-ci.yml
-name: Playwright Tests
+name: Playwright CI
 
 on:
   push:
-    branches: [main, develop]
+    branches: ['main']
   pull_request:
-    branches: [main]
-
-env:
-  CI: true # ← ESSENCIAL: Define que estamos em CI
-  BROWSER: chromium
+    branches: ['main']
 
 jobs:
-  test:
-    timeout-minutes: 60
+  tests:
+    name: Run Playwright E2E Tests
     runs-on: ubuntu-latest
 
     steps:
+      # 1) Checkout
       - name: Checkout repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
+      # 2) Setup Python
       - name: Setup Python
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v5
         with:
           python-version: '3.12'
 
+      # 3) Install dependencies
       - name: Install dependencies
+        # requirements fornecido por você
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
-          pip install pytest playwright pytest-html
 
-      - name: Install Playwright browsers
+      # 4) Install Playwright browsers + deps (OBRIGATÓRIO NO LINUX)
+      - name: Install Playwright Browsers
         run: |
-          playwright install chromium
-          playwright install-deps  # ← ESSENCIAL para Linux
+          python -m playwright install --with-deps
 
-      - name: Run tests
+      # 5) Run tests (com relatório HTML)
+      - name: Run Pytest
         run: |
-          pytest e2e/ \
-            --html=reports/report.html \
-            --self-contained-html \
-            -v
+          pytest -s -v --html=reports/report.html
 
-      - name: Upload test report
-        if: always()
-        uses: actions/upload-artifact@v3
+      # 6) Upload artifacts (relatório pytest-html)
+      - name: Upload Test Artifacts
+        uses: actions/upload-artifact@v4
         with:
-          name: test-report
+          name: playwright-report
           path: reports/
