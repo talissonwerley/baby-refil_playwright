@@ -21,7 +21,7 @@ def browser(playwright_instance: Playwright):
     Fixture de sessão que cria uma instância do navegador
     Chrome Headed conforme especificado no prompt
     """
-    browser = playwright_instance.chromium.launch(headless=False)
+    browser = playwright_instance.chromium.launch(headless=True)
     yield browser
     browser.close()
 
